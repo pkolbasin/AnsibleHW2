@@ -1,0 +1,59 @@
+---
+- name: install git
+  hosts: all
+  become: yes
+  tasks:
+    - name: install git
+      apt:
+        name: git
+        state: present
+
+    - name: copy app files
+      git:
+        repo: https://github.com/FaztWeb/php-mysql-crud.git
+        dest: /tmp/fazt_files
+        clone: yes
+        force: yes
+
+- name: configure mysql
+  hosts: db
+  become: yes
+  vars_files:
+    - vars.yml
+  roles:
+    - mysql
+  tasks:
+    - name: import sql script
+      mysql_db:
+        name: all
+        state: import
+        target: /tmp/fazt_files/database/script.sql
+        login_user: "{{mysql_user}}"
+        login_password: "{{mysql_password}}"
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: install app
+  hosts: lamp
+  become: yes
+  vars_files:
+    - vars.yml
+  roles:
+    - lamp
+  tasks:
+    - name: delete default index.html
+      file:
+        path: /var/www/html/index.html
+        state: absent
+
+    - name: copy app files
+      copy:
+        src: /tmp/fazt_files/
+        dest: /var/www/html
+        recursive: yes
+
+    - name: replace db.php
+      template:
+        src: ./db.php.j2
+        dest: /var/www/html/db.php
+
+

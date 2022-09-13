@@ -1,0 +1,32 @@
+
+- name: install apache
+  become: true
+  apt:
+    name: apache2
+    update_cache: yes
+    state: latest
+
+- name: starts apache
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+
+- name: install php
+  become: true
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    state: latest
+  with_items:
+    - php
+    - php-mysql
+    - libapache2-mod-php
+    - php-curl
+    - php-gd
+    - php-mbstring
+    - php-xml
+    - php-xmlrpc
+    - php-soap
+    - php-intl
+    - php-zip

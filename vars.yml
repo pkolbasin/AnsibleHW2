@@ -1,0 +1,11 @@
+---
+#HTTP
+http_host: "192.168.0.10"
+http_conf: "192.168.0.10.conf"
+http_port: "80"
+
+#MySQL
+mysql_host: "192.168.0.20"
+mysql_user: "db_admin"
+mysql_password: "sicretpasswd"
+mysql_bind_address: "0.0.0.0"
